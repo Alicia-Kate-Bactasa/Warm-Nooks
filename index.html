@@ -3,18 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warm Nooks</title>
+    <title>Warm Nooks - Notes App</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
+
+    <div id="welcomeScreen" class="screen">
+        <div class="welcome-card">
             <h1>Warm Nooks</h1>
-            <p class="subtitle">a calming space for book worms!</p>
-        </header>
+            <p class="tagline">a calming space for your thoughts</p>
+            <div class="icon"></div>
+            <button onclick="showLogin()" class="btn-primary">Log In</button>
+            <button onclick="showCreateAccount()" class="btn-secondary">Create New Account</button>
+        </div>
     </div>
+
+    <div id="loginScreen" class="screen hidden">
+        <div class="auth-card">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Log in to your account</p>
+            <form onsubmit="login(event)">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="your.email@example.com" required>
+                
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required>
+                
+                <button type="submit" class="btn-primary">Log In</button>
+            </form>
+            <button onclick="showCreateAccountFromLogin()" class="link-btn">Don't have an account? Create one</button>
+            <button onclick="showWelcome()" class="link-btn-small">← Back</button>
+        </div>
+    </div>
+
+
+    <div id="createAccountScreen" class="screen hidden">
+        <div class="auth-card">
+            <h2>Join Warm Nooks</h2>
+            <p class="subtitle">Create your account</p>
+            <form onsubmit="createAccount(event)">
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="Your Name" required>
+                
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="hello.hi@example.com" required>
+                
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="••••••••" required>
+                
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirmPassword" placeholder="••••••••" required>
+                
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+            <button onclick="showLoginFromCreateAccount()" class="link-btn">Already have an account? Log in</button>
+            <button onclick="showWelcome()" class="link-btn-small">← Back</button>
+        </div>
+    </div>
+<!-- Main App -->
+    <div id="mainApp" class="screen hidden">
+<!-- Header -->
+        <header id="header">
+            <h1>Warm Nooks</h1>
+            <div class="header-right">
+                <span class="welcome-text">welcome back, <span class="username">ishie!</span></span>
+                <button class="profile-btn" onclick="alert('Profile settings coming soon!')">👤</button>
+            </div>
+        </header>
+<!-- Sidebar -->
+        <aside id="sidebar" class="sidebar-open">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="search here..." id="sidebarSearch">
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" onclick="navigateTo('notes')">my notes</button>
+                <button class="nav-btn" onclick="navigateTo('new')">create new</button>
+                <button class="nav-btn" onclick="navigateTo('favorites')">favorites</button>
+                <button class="nav-btn" onclick="navigateTo('archive')">archive</button>
+                <button class="nav-btn" onclick="navigateTo('about')">about us</button>
+                <button class="nav-btn" onclick="navigateTo('settings')">settings</button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <button class="btn-logout" onclick="logout()">log out</button>
+            </div>
+        </aside>
+
+       
+        <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+            <span id="toggleArrow">◀</span>
+        </button>
+
+        <main id="mainContent">
+          
+            <section id="notesSection" class="content-section">
+                <div class="content-header">
+                    <h2>My Notes</h2>
+                    <button class="btn-new" onclick="navigateTo('new')">+ New Note</button>
+                </div>
+                <div class="notes-grid" id="notesGrid">
+          
+                </div>
+            </section>
+
+
+            <section id="newSection" class="content-section hidden">
+                <div class="content-header">
+                    <h2>Create New Note</h2>
+                </div>
+                <div class="note-editor">
+                    <input type="text" id="noteTitle" placeholder="Note Title..." class="note-title-input">
+                    <textarea id="noteContent" placeholder="Start writing your note..." class="note-content-input"></textarea>
+                    <div class="editor-actions">
+                        <button class="btn-primary" onclick="saveNote()">Save Note</button>
+                        <button class="btn-secondary" onclick="navigateTo('notes')">Cancel</button>
+                    </div>
+                </div>
+            </section>
+
+   
+            <section id="favoritesSection" class="content-section hidden">
+                <div class="content-header">
+                    <h2>Favorite Notes</h2>
+                </div>
+                <div class="notes-grid" id="favoritesGrid">
+                    <p class="empty-state">No favorite notes yet. Star your notes to see them here!</p>
+                </div>
+            </section>
+
+
+            <section id="archiveSection" class="content-section hidden">
+                <div class="content-header">
+                    <h2>Archived Notes</h2>
+                </div>
+                <div class="notes-grid" id="archiveGrid">
+                    <p class="empty-state">No archived notes yet.</p>
+                </div>
+            </section>
+
+
+            <section id="aboutSection" class="content-section hidden">
+                <div class="info-card">
+                    <h2>About Warm Nooks</h2>
+                    <p>Welcome to Warm Nooks - a calming space for your thoughts!</p>
+                    <p>We believe everyone deserves a peaceful digital space to capture ideas, organize thoughts, and reflect on life's moments.</p>
+                    <div class="features-box">
+                        <h3>Features:</h3>
+                        <ul>
+                            <li>Create and organize notes</li>
+                            <li>Mark favorites</li>
+                            <li>Archive old notes</li>
+                            <li>Search your thoughts</li>
+                            <li>Calm, distraction-free design</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+    
+            <section id="settingsSection" class="content-section hidden">
+                <div class="info-card">
+                    <h2>Settings</h2>
+                    <div class="setting-item">
+                        <div>
+                            <h3>Notifications</h3>
+                            <p>Receive reminders about your notes</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="notificationsToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <h3>Dark Mode</h3>
+                            <p>Easy on the eyes</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="account-settings">
+                        <h3>Account Settings</h3>
+                        <button class="btn-secondary">Change Password</button>
+                        <button class="btn-secondary">Update Profile</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
